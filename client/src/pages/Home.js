@@ -5,6 +5,7 @@ export default function Home() {
 
   const [userInput, setuserInput] = useState("");
   const [characterCount, setcharacterCount] = useState(0);
+  const [isFetching, setIsFetching] = useState(false);
   const navigate = useNavigate();
 
   const handleEvent =(e)=> {
@@ -17,11 +18,11 @@ export default function Home() {
       document.getElementById("counter").style.color = "#ff0000";
       document.getElementById("submit").disabled = true;
     };
-
   }
 
   async function onSubmit(e){
     e.preventDefault();
+    setIsFetching(true);
 
     try {
       const res = await fetch('/api', {
@@ -40,9 +41,10 @@ export default function Home() {
     } catch(error) {
       console.error(error);
       alert(error.message);
+    } finally {
+      setIsFetching(false);
     }
   }
-
 
   return (
       <form className="userform" onSubmit={onSubmit}>
@@ -54,7 +56,15 @@ export default function Home() {
           </textarea>
           <h6 id="counter"> {characterCount} <span> /250 </span> </h6>
         </div>
-        <button disabled={true} id="submit">Submit</button>
+        <button disabled={isFetching || characterCount < 10 || characterCount > 250} id="submit">
+          {isFetching ?
+          <span>
+            Thinking
+            <span className="dot">.</span><span className="dot">.</span><span className="dot">.</span>
+          </span> :
+          'Submit' 
+          }
+        </button>
       </form>
   );
 };
