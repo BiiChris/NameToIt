@@ -41,7 +41,7 @@ class db_data {
     };
 };
 
-const allowedOrigins = ["http://nametoit.com", "https://nametoit.com", "http://localhost:4000"]
+const allowedOrigins = ["http://nametoit.com", "https://nametoit.com", "http://localhost:4000", "nametoit.com"]
 
 let db;
 
