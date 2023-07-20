@@ -45,7 +45,7 @@ let db;
 
 app.use(express.static(buildPath),
     cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:4000',
     methods: 'POST'
   }),
   express.json(),
