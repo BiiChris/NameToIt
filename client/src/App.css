@@ -204,6 +204,11 @@ align-items: center;
     margin-top: 1vh;
   }
   
+  button {
+    min-width: 10vw;
+    min-height: 4vh;
+  }
+
 }
 
 @media screen and (max-width: 800px) {
