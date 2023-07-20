@@ -41,11 +41,13 @@ class db_data {
     };
 };
 
+const allowedOrigins = ["http://nametoit.com", "https://nametoit.com", "http://localhost:4000"]
+
 let db;
 
 app.use(express.static(buildPath),
     cors({
-    origin: 'http://localhost:4000',
+    origin: allowedOrigins,
     methods: 'POST'
   }),
   express.json(),
