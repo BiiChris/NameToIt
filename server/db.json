@@ -1,6 +1,6 @@
 {
-  "prompt": "Who was the main character in pursuit of happiness",
-  "response": "Chris Gardner",
+  "prompt": "Who is the president of kenya",
+  "response": "Uhuru Kenyatta",
   "product": false,
   "finish_reason": "stop",
   "feedback": "None"
