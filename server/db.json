@@ -1,0 +1,7 @@
+{
+    "prompt": "Who is the president of france",
+    "response": "Emmanuel Macron",
+    "product": false,
+    "finish_reason": "stop",
+    "feedback": "None"
+  }
