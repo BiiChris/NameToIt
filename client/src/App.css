@@ -24,12 +24,8 @@ body {
 /* Common button styling */
 
 button {
-  max-width: 15rem;
-  max-height: 5rem;
-  max-width: 15vw;
-  max-height: 5vh;
-  height: 100%;
-  width: 100%;
+  width: 13rem;
+  height: 3.5rem;
   transition: 0.5s;
   padding: 1.2rem;
   color: #575757;
@@ -193,7 +189,7 @@ align-items: center;
 @media screen and (max-height: 1000px) {
 
   header {
-    margin-top: 3vh;
+    margin-top: 1vh;
   }
 
   .userform {
@@ -212,6 +208,11 @@ align-items: center;
 }
 
 @media screen and (max-width: 800px) {
+
+  button {
+    width: 10rem;
+    height: 3rem;
+  }
 
   .userform textarea {
     max-width: 60vw;
@@ -240,6 +241,10 @@ align-items: center;
     flex-direction: column;
   }
 
+  footer h3 {
+    font-size: 1.3rem;
+  }
+
   .NotFound {
     font-size: 2.5rem;
   }
@@ -250,7 +255,7 @@ align-items: center;
   
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 603px) {
 
   .userform textarea {
     height: 30vh;
@@ -271,7 +276,7 @@ align-items: center;
   }
 
   footer h3 {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
   }
 
   footer button {
@@ -330,7 +335,6 @@ align-items: center;
 footer {
   margin-top: auto;
   display: flex;
-  flex-direction: row;
   width: 70vw;
   align-items: center;
   justify-content: space-between;
