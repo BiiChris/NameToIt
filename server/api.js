@@ -103,7 +103,7 @@ app.post("/api", async function (req,res) {
 
         const jsonData = JSON.stringify(db, null, 2);
 
-        fs.writeFile('db.json', jsonData, 'utf-8', ()=> {
+        fs.appendFile('db.json', jsonData, 'utf-8', ()=> {
             console.log('Data written successfully')
         })
 
