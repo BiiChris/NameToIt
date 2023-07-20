@@ -192,6 +192,14 @@ align-items: center;
 
 @media screen and (max-height: 1000px) {
 
+  header {
+    margin-top: 3vh;
+  }
+
+  .userform {
+    margin-top: 4vh;
+  }
+
   #counter {
     margin-top: 1vh;
   }
