@@ -1,6 +1,6 @@
 {
-  "prompt": "A modular guitar pedalboard that accepts any pedal size",
-  "response": "Modular guitar pedalboard",
+  "prompt": "Who is the president of france",
+  "response": "Emmanuel Macron",
   "product": false,
   "finish_reason": "stop",
   "feedback": "None"
