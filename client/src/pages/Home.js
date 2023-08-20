@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
-
   const [userInput, setuserInput] = useState("");
   const [characterCount, setcharacterCount] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
@@ -27,17 +26,14 @@ export default function Home() {
     try {
       const res = await fetch('/api', {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({userInput: userInput}),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({userInput: userInput})})
         if (res.status !== 200) {
           throw res.error || new Error(`Request failed with status ${res.status}`)
         }
-        const data = await res.json()
-        navigate(`/result?res=${data.result}`)
-      
+        await res.json()
+          .then( data => navigate(`/result?res=${data.result}`))
+
     } catch(error) {
       console.error(error);
       alert(error.message);
