@@ -1,0 +1,79 @@
+{
+  "prompt": "tall blue box with a hole in front",
+  "response": "Mailbox",
+  "product": false,
+  "finish_reason": "stop",
+  "feedback": "None"
+}{
+  "prompt": "Who is the president of kenya",
+  "response": "Uhuru Kenyatta",
+  "product": false,
+  "finish_reason": "stop",
+  "feedback": "None"
+}{
+  "prompt": "a service to talk to external system called seek",
+  "response": "Seek",
+  "product": false,
+  "finish_reason": "stop",
+  "feedback": "None"
+}{
+  "prompt": "film set at chrismas, in a tower with terrorists\n",
+  "response": "Die Hard",
+  "product": true,
+  "finish_reason": "stop",
+  "feedback": "None"
+}{
+  "prompt": "sport from japan, in olympic games",
+  "response": "Sumo wrestling",
+  "product": false,
+  "finish_reason": "stop",
+  "feedback": "None"
+}{
+  "prompt": "sport from japan, olympic sport, white suits",
+  "response": "Judo",
+  "product": false,
+  "finish_reason": "stop",
+  "feedback": "None"
+}{
+  "prompt": "like Judo, but not as good",
+  "response": "Jiu-Jitsu",
+  "product": false,
+  "finish_reason": "stop",
+  "feedback": "None"
+}{
+  "prompt": "programming language, fast, versatile, mature\n",
+  "response": "Python",
+  "product": false,
+  "finish_reason": "stop",
+  "feedback": "None"
+}{
+  "prompt": "What was the word used for when like greeks or romans met up and the people would voice their ideas and thoughts to leaders. Kinda like a town hall of sort",
+  "response": "Assembly",
+  "product": false,
+  "finish_reason": "stop",
+  "feedback": "None"
+}{
+  "prompt": "Come up with a unique name for social media",
+  "response": "SociaLink",
+  "product": false,
+  "finish_reason": "stop",
+  "feedback": "None"
+}{
+  "prompt": "What is the word for what you call people who arrive in a country without necessary credentials but claim this word in order to stay",
+  "response": "Undocumented immigrants",
+  "product": false,
+  "finish_reason": "stop",
+  "feedback": "None"
+}{
+  "prompt": "Who is the lastest us president ",
+  "response": "Joe Biden",
+  "product": false,
+  "finish_reason": "stop",
+  "feedback": "None"
+}{
+  "prompt": "The person that allows a behavior to continue ",
+  "response": "enabler",
+  "product": false,
+  "finish_reason": "stop",
+  "feedback": "None"
+}
