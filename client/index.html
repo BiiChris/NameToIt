@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script type="module" src="src/index.ts" defear></script>
+    <link rel="stylesheet" href="src/index.css"/>
+    <title>NameToIt</title>
+  </head>
+  <body>
+    <main>
+      <section id="user_input">
+        <textarea
+          autocapitalize="off"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+          maxlength="250"
+          autofocus>
+        </textarea>
+        <p><span>0</span>/250</p>
+      </section>
+      <section id="result" hidden>
+        <h1></h1>
+        <div id="feedback">
+          <h1></h1>
+          <button class="result_buttons" disabled>Yes</button>
+          <button class="result_buttons" disabled>No</button>
+        </div>
+        <button class="result_buttons" id="reset" disabled>Reset</button>
+      </section>
+    </main>
+    <footer>
+      <h1>NameToIt</h1>
+      <a href="https://github.com/biichris/nametoit" target="_blank"><img src="github-icon.svg" alt="Github" height="40px"></a>
+    </footer>
+  </body>
+</html>
