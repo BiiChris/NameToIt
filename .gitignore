@@ -1,4 +1,9 @@
 *node_modules
 *.DS_Store
 *.env
-*Dockerfile
+app
+*.vscode
+*.devcontainer
+Makefile
+dockerfile
+.netrc

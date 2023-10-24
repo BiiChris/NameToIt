@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"net/http"
 	"os"
 
-	lite "github.com/biichris/go/sql"
+	db "github.com/biichris/go/sql"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -39,7 +39,7 @@ func New() *controller {
 			}},
 			Max_Tokens: max_tokens,
 		},
-		db: lite.Start("sqlite3", "../db/nametoit.db"),
+		db: db.Sqlite(os.Getenv("DB_DIR")),
 	}
 }
 
@@ -86,7 +86,7 @@ func process_raw_response(raw *http.Response, prompt *string, db *sql.DB) (int64
 
 	response := raw_response.Choices[0].Message.Content
 	if completed := raw_response.Choices[0].FinishReason == "stop"; !completed {
-		return 0, "", fmt.Errorf("unable to complete the request")
+		return 0, "", errors.New("there was an error getting a response")
 	}
 
 	purchasable := response[len(response)-2:] == "$#"
@@ -153,8 +153,8 @@ func (u *controller) OpenAi(c *fiber.Ctx) error {
 }
 
 type feedback_request struct {
-	Id      int64 `json:"id"`
-	Success bool  `json:"success"`
+	Id      uint `json:"id"`
+	Success uint `json:"success"`
 }
 
 func (u *controller) FeedBack(c *fiber.Ctx) error {
@@ -164,7 +164,7 @@ func (u *controller) FeedBack(c *fiber.Ctx) error {
 		return c.SendStatus(400)
 	}
 
-	_, err := u.db.Exec("UPDATE logs SET success = ? WHERE id = ?", feedback.Success, feedback.Id)
+	_, err := u.db.Exec("UPDATE logs SET success = ? WHERE ROWID = ?", feedback.Success, feedback.Id)
 	if err != nil {
 		return c.SendStatus(500)
 	}

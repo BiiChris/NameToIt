@@ -1,5 +1,5 @@
 export default {
     build: {
-        outDir: '../server/public'
+        outDir: '../app/web'
     }       
 }

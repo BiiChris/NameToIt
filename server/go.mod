@@ -11,13 +11,13 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.6 // indirect
-	github.com/biichris/go v0.0.0-20230915200602-a095b6d5c107
+	github.com/biichris/go v0.0.0-20231024065222-875133d10bf5
 	github.com/google/uuid v1.3.1 // indirect
-	github.com/klauspost/compress v1.17.1 // indirect
+	github.com/klauspost/compress v1.17.2 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
-	github.com/mattn/go-sqlite3 v1.14.17
+	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/philhofer/fwd v1.1.2 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/tinylib/msgp v1.1.8 // indirect

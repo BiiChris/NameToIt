@@ -1,4 +1,4 @@
-:root, body {
+:root {
     height: 100vh;
     width: 100vw;
     margin: 0;
@@ -7,69 +7,89 @@
     font-family: 'Courier New', Courier, monospace;
     line-height: 1.5;
     font-weight: 400;
-  
+    
     color-scheme: light dark;
     color: rgba(54, 54, 54, 0.87);
     background-color: black;
-  
+    
     font-synthesis: none;
     text-rendering: optimizeLegibility;
-
+    
     display: flex;
     flex-direction: column;
+}
 
+body {
+    all: inherit;
+}
+
+main {
+    flex: 1;
+    padding: 10vh 10vw 0 10vw;
+}
+
+#theme {
+    cursor: pointer;
+}
+
+section {
+    display: inherit;
+    flex-direction: inherit;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+textarea {
+    width: 75vw;
+    resize: none;
+    border: none;
+    outline: none;
+    background-color: inherit;
+
+    font-size: 2.5rem;
+    color: inherit;
+
+    font-family: inherit;
     text-align: center;
 }
 
 span {
     color: red;
 }
-  
-.result_buttons {
-    display: none;
+
+button {
+    font-size: 1.4rem;
+    padding: 0.3rem 2rem;
+    border-radius: 500px;
+    margin: 1rem;
 }
 
-main {
-    flex: 1;
-    padding: 5vw 10vh 5vw 0;
+button:nth-child(3) {
+    background-color: green;
+}
+
+button:nth-child(4) {
+    background-color: red;
 }
 
 footer {
     flex-shrink: 0;
-    height: 80px;
-
+    align-items: center;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
-}
-
-textarea {
-    width: 100%;
-    resize: none;
-    border: none;
-    outline: none;
-    background-color: transparent;
-    font-size: 3rem;
-    color: inherit;
-
-    text-align: center;
-}
-
-.feedback * {
-    display: inline-block;
-}
-
-.feedback button:nth-child(2) {
-    background-color: green;
-}
-
-.feedback button:nth-child(3) {
-    background-color: red;
+    justify-content: space-evenly;
 }
 
 @media (prefers-color-scheme: light) {
     :root, textarea {
         color: #213547;
-        background-color: #ffffff;
+        background-color: white;
+    }
+}
+
+@media (max-width: 700) and (max-height: 700) {
+    textarea {
+        font-size: 1.5rem;
     }
 }

@@ -1,163 +1,198 @@
 import axios from 'axios';
 
-class dom_elements {
-    protected element = (query: string) => document.querySelector(query);
+// Global
+let root = document.documentElement
+let theme_icon = query('#theme img') as HTMLImageElement
+let theme_toggle = query('#theme') as HTMLAnchorElement
 
-    // Initial Elements
-    protected input: HTMLTextAreaElement = this.element('textarea')! as HTMLTextAreaElement;
-    protected char_count: HTMLSpanElement = this.element('span')! as HTMLSpanElement;
+// User input
+let textarea = query('#user_input textarea') as HTMLTextAreaElement
+let char_count = query('#char_count') as HTMLSpanElement
 
-    constructor() {
-        this.input.addEventListener('input', this.handle_input)
+// Feedback section
+let feedback_id: number;
+let feedback_prompt = query('#feedback h1') as HTMLElement
+let feedback_section = query('#feedback') as HTMLElement
+
+// feedback[:2] - reset[2]
+let buttons = query('button', true) as NodeListOf<HTMLButtonElement>
+
+// Abort signal
+let abort: AbortController | undefined;
+
+// Theme toggle listener
+theme_toggle.addEventListener('click', toggle_theme)
+
+textarea.addEventListener('input', handle_input)
+// Trigger input event for height fix
+textarea.dispatchEvent(new Event('input'))
+
+// Submit listener
+textarea.addEventListener('keypress', submit)
+for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', i != 2 ? send_feedback.bind(this, i == 0 ? 1 : 0) : handle_reset)
+}
+
+function query(query: string, all: boolean = false) {
+    return all ? document.querySelectorAll(query)!  : document.querySelector(query)!
+}
+
+function toggle_theme() {
+    const dark = root.style.backgroundColor !== 'white'
+
+    theme_icon.src = dark ? 'dark-theme.svg' : 'light-theme.svg';
+    theme_icon.alt = dark ? 'Dark theme' : 'Light theme';
+
+    root.style.color = dark ? 'Black' : 'rgba(54, 54, 54, 0.87)';
+    root.style.backgroundColor = dark ? 'white' : 'Black';
+}
+
+function handle_input() {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+
+    char_count.innerText = textarea.value.length.toString();
+    char_count.style.color = textarea.value.length < 10 ? 'red' : 'green';
+}
+
+async function submit(e: KeyboardEvent) {
+    if (e.key !== 'Enter') return
+
+    feedback_section.hidden = false
+    textarea.disabled = true
+
+    let message: string;
+    let err = false;
+
+    await axios.get('/api', { params: { prompt: textarea.value }})
+        .then(res => {
+            message = res.data.response
+            feedback_id = res.data.id
+        })
+        .catch(()=> {
+            message = 'Seems to have been an error. Please try again.'
+            err = true
+        })
+
+    await remove_text.call(textarea, 76)
+
+    await add_text.call(textarea, message!, 76)
+
+    await useless_delay(400)
+
+    if (!err) {
+
+        await add_text.call(feedback_prompt, 'Did we get it right?', 74)
+
+        for (let i = 0; i < 2; i++) hide_enable.call(buttons[i]);
+
+        await useless_delay(400);
     }
 
-    handle_input() {
-        const len = this.input.value.length;
+    hide_enable.call(buttons[2])
 
-        // Set counter
-        this.char_count.innerText = len.toString();
+    document.addEventListener('keypress', enter_reset)
+}
 
-        // Set counter color
-        if (len >= 10) this.char_count.style.color = "green";
-        if (len < 10) this.char_count.style.color = "red"
-
-        // Set height
-        this.input.style.height = "auto";
-        this.input.style.height = (this.input.scrollHeight) + "px";
-    }
+async function send_feedback(success: number) {
+    axios.post('/feedback', { id: feedback_id, success })
     
-    protected async remove_displayed_message(this: HTMLElement, time: number) {
-        for (let i = 0; i < this.innerText.length; i++) {
-            await new Promise((resolve)=> {
-                setTimeout(()=> {
-                    resolve(this.innerText = this.innerText.slice(0, -1))
-                }, time)
-            })
-        }
+    for(let i = 0; i < 2; i++) {
+        hide_enable.call(buttons[i])
     }
 
-    protected async display_message(this: HTMLElement, message: any, time: number) {
-        for (const char of message) {
-            await new Promise((resolve)=> {
-                setTimeout(()=> {
-                    resolve(this.insertAdjacentText('beforeend', char))
-                }, time)
-            })
-        }
+    abort = new AbortController();
+
+    await remove_text.call(feedback_prompt, 70, abort)
+
+    await add_text.call(feedback_prompt, 'Thank you for the feedback!', 60, abort)
+}
+
+function enter_reset(e: KeyboardEvent) {
+    if (e.key !== 'Enter') return
+    e.preventDefault();
+
+    handle_reset()
+}
+
+function handle_reset() {
+    // Abort any text being printed
+    abort?.abort();
+
+    // Hide buttons
+    let range = [2]
+    if (!buttons[0].disabled) range.push(0, 1)
+    for (const i of range) {
+        hide_enable.call(buttons[i])
     }
 
-    protected async useless_delay(time: number) {
-        return new Promise((resolve)=> {
+    // Remove feedback prompt
+    feedback_prompt.innerText = ""
+
+    // Remove reset with enter key listener
+    document.removeEventListener('keypress', enter_reset)
+
+    // Reset textarea
+    textarea.value = ""
+    textarea.dispatchEvent(new Event('input'));
+    textarea.disabled = false;
+
+    // Hide elements
+    hide_enable.call(feedback_section);
+
+    window.scrollTo(0, 0);
+    textarea.focus();
+}
+
+async function useless_delay(time: number) {
+    return await new Promise((resolve)=> {
+        setTimeout(()=> {
+            resolve(void 0)
+        }, time)
+    })
+}
+
+interface has_value extends HTMLElement {
+    value?: string
+}
+
+async function add_text(this: has_value, text: string, time: number, abort?: AbortController) {
+    const property = this.value !== undefined;
+
+    for(let i = 0; i < text.length; i++) {
+        if (abort?.signal.aborted) return textarea.value = ""
+        await new Promise((resolve)=> {
             setTimeout(()=> {
-                resolve(void 0)
+                if (property) resolve(this.value += text[i])
+                else resolve(this.insertAdjacentText('beforeend', text[i]))
             }, time)
         })
     }
 }
 
-class nametoit extends dom_elements {
-    // Global response section
-    private response_section: HTMLElement = this.element('#result')! as HTMLElement;
+async function remove_text(this: has_value, time: number, abort?: AbortController) {
+    let value = this.value !== undefined;
 
-    // Result
-    private result_id?: number;
-    private result: HTMLElement = this.element('#result h1')! as HTMLElement;
-    
-    // Feedback
-    private feedback_prompt = this.element('div.feedback h1')! as HTMLElement;
-    
-    // Buttons (feedback[:2] - reset[2])
-    private buttons = document.querySelectorAll('.result_buttons')! as NodeListOf<HTMLButtonElement>;
+    let property: 'value' | 'innerText' = value ? 'value' : 'innerText';
+    let current = value ? this.value : this.innerText;
 
-    constructor() {
-        super();
-        this.input.addEventListener('keypress', async (e)=> await this.submit.call(this, e))
-        this.buttons[2].addEventListener('click', this.reset)
-        for (let i = 0; i < 2; i++) {
-            this.buttons[i].addEventListener('click', this.feedback.bind(this, i === 0))
-        }
-    }
+    if (!current) return
 
-    async submit(e: KeyboardEvent) {
-        if (e.key !== 'Enter') return
-        this.input.disabled = true;
-        this.response_section.hidden = false;
-
-        try {
-            const response = await axios.get('http://localhost:8000/api', { params: { prompt: this.input.value } })
-            
-            // Register Id for feedback
-            this.result_id = response.data.id;
-
-            // Display result
-            await this.display_message.call(this.result, "Did you mean: " + response.data.response, 75)
-
-            await this.useless_delay(400);
-
-            // Display feedback question
-            await this.display_message.call(this.feedback_prompt, "Did we get it right?", 80)
-
-            await this.useless_delay(300);
-
-            // Toggle Feedback buttons
-            this.toggle_buttons([0, 1]);
-
-        } catch {
-            // Display error message
-            await this.display_message.call(this.result, "There was an error getting a response. Please try again.", 80)
-
-            await this.useless_delay(400);
-        }
-
-        // Reset Button
-        document.addEventListener('keypress', this.enter_reset.bind(this, e))
-        this.toggle_buttons([2]);
-    }
-
-    private toggle_buttons(range: Array<number>) {
-        for (let i = 0; i < range.length; i++) {
-            this.buttons[range[i]].disabled = !this.buttons[range[i]].disabled;
-            this.buttons[range[i]].style.display = this.buttons[range[i]].style.display === "none" ? "inline-block" : "none";
-        }
-    }
-
-    private async feedback(success: boolean) {
-        await axios.post('http://localhost:8000/feedback', { id: this.result_id, success: success })
-
-        await this.remove_displayed_message.call(this.feedback_prompt, 79)
-        await this.display_message.call(this.feedback_prompt, "Thank you for your feedback!", 80)
-    }
-
-    private enter_reset(e: KeyboardEvent) {
-        if (e.key !== 'Enter') return
-        this.reset();
-    }
-
-    private reset() {
-        // Hide/Disable buttons
-        let range: Array<number> = [2]
-        if (this.buttons[0].disabled) range.push(0, 1);
-        this.toggle_buttons(range);
-
-        // Remove enter event listener
-        document.removeEventListener('keypress', this.enter_reset.bind(this))
-
-        // Empty out elements
-        this.result.innerText = "";
-        this.feedback_prompt.innerText = "";
-        this.input.value = "";
-
-        // Hide result section
-        this.response_section.hidden = true;
-
-        // Reset response id
-        this.result_id = undefined;
-
-        // Reset input
-        this.input.style.height = "auto";
-        this.input.disabled = false;
-        this.input.focus();
+    for(let i = 0; i < current.length; i++) {
+        if (abort?.signal.aborted) return this[property] = ""
+        await new Promise((resolve)=> {
+            setTimeout(() => {
+                resolve(this[property] = current!.slice(0, current!.length - (i + 1)))
+            }, time);
+        })
     }
 }
 
-new nametoit();
+interface enabable_element extends HTMLElement {
+    disabled?: boolean
+}
+
+function hide_enable(this: enabable_element) {
+    this.hidden = !this.hidden
+    if (this.disabled != undefined) this.disabled = this.hidden
+}
