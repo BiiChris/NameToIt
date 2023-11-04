@@ -13,7 +13,7 @@ import (
 )
 
 const openai_url = "https://api.openai.com/v1/chat/completions"
-const prompt_context = ": Identify the name of what is being described, if its a purchasable item end with \"$#\". No full sentence as response, only single or composed words."
+const prompt_context = ":\nFind the word or name matching this description. No full sentence as response, it must be consice. If the word or name is purchasable end with :1 else :0. Final format: [response]:[:bool]"
 const model = "gpt-3.5-turbo"
 const role = "user"
 const max_tokens = 15
@@ -89,10 +89,8 @@ func process_raw_response(raw *http.Response, prompt *string, db *sql.DB) (int64
 		return 0, "", errors.New("there was an error getting a response")
 	}
 
-	purchasable := response[len(response)-2:] == "$#"
-	if purchasable {
-		response = response[:len(response)-2]
-	}
+	purchasable := response[len(response)-1:] == "1"
+	response = response[:len(response)-2]
 
 	res, err := db.Exec("INSERT INTO logs (prompt, response, purchasable) VALUES (?, ?, ?)", *prompt, response, purchasable)
 	if err != nil {
@@ -136,6 +134,8 @@ func (u *controller) OpenAi(c *fiber.Ctx) error {
 	res, err := u.client.Do(http)
 	if err != nil {
 		return c.SendStatus(500)
+	} else if res.StatusCode != 200 {
+		return c.Status(500).SendString("There has been an error processing your request.")
 	}
 	defer res.Body.Close()
 

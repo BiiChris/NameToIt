@@ -20,6 +20,9 @@ let buttons = query('button', true) as NodeListOf<HTMLButtonElement>
 // Abort signal
 let abort: AbortController | undefined;
 
+// Request state
+let req: boolean = false;
+
 // Theme toggle listener
 theme_toggle.addEventListener('click', toggle_theme)
 
@@ -34,7 +37,7 @@ for (let i = 0; i < buttons.length; i++) {
 }
 
 function query(query: string, all: boolean = false) {
-    return all ? document.querySelectorAll(query)!  : document.querySelector(query)!
+    return all ? document.querySelectorAll(query)! : document.querySelector(query)!
 }
 
 function toggle_theme() {
@@ -56,7 +59,10 @@ function handle_input() {
 }
 
 async function submit(e: KeyboardEvent) {
-    if (e.key !== 'Enter') return
+    if (e.key !== 'Enter' || req) return
+    req = true
+    e.preventDefault();
+    e.stopPropagation();
 
     feedback_section.hidden = false
     textarea.disabled = true
@@ -64,12 +70,12 @@ async function submit(e: KeyboardEvent) {
     let message: string;
     let err = false;
 
-    await axios.get('/api', { params: { prompt: textarea.value }})
+    await axios.get('/api', { params: { prompt: textarea.value } })
         .then(res => {
             message = res.data.response
             feedback_id = res.data.id
         })
-        .catch(()=> {
+        .catch(() => {
             message = 'Seems to have been an error. Please try again.'
             err = true
         })
@@ -96,8 +102,8 @@ async function submit(e: KeyboardEvent) {
 
 async function send_feedback(success: number) {
     axios.post('/feedback', { id: feedback_id, success })
-    
-    for(let i = 0; i < 2; i++) {
+
+    for (let i = 0; i < 2; i++) {
         hide_enable.call(buttons[i])
     }
 
@@ -136,6 +142,7 @@ function handle_reset() {
     textarea.value = ""
     textarea.dispatchEvent(new Event('input'));
     textarea.disabled = false;
+    req = false
 
     // Hide elements
     hide_enable.call(feedback_section);
@@ -145,8 +152,8 @@ function handle_reset() {
 }
 
 async function useless_delay(time: number) {
-    return await new Promise((resolve)=> {
-        setTimeout(()=> {
+    return await new Promise((resolve) => {
+        setTimeout(() => {
             resolve(void 0)
         }, time)
     })
@@ -159,10 +166,10 @@ interface has_value extends HTMLElement {
 async function add_text(this: has_value, text: string, time: number, abort?: AbortController) {
     const property = this.value !== undefined;
 
-    for(let i = 0; i < text.length; i++) {
-        if (abort?.signal.aborted) return textarea.value = ""
-        await new Promise((resolve)=> {
-            setTimeout(()=> {
+    for (let i = 0; i < text.length; i++) {
+        if (abort?.signal.aborted) return this.value ? this.value = "" : this.innerText = "";
+        await new Promise((resolve) => {
+            setTimeout(() => {
                 if (property) resolve(this.value += text[i])
                 else resolve(this.insertAdjacentText('beforeend', text[i]))
             }, time)
@@ -178,9 +185,9 @@ async function remove_text(this: has_value, time: number, abort?: AbortControlle
 
     if (!current) return
 
-    for(let i = 0; i < current.length; i++) {
+    for (let i = 0; i < current.length; i++) {
         if (abort?.signal.aborted) return this[property] = ""
-        await new Promise((resolve)=> {
+        await new Promise((resolve) => {
             setTimeout(() => {
                 resolve(this[property] = current!.slice(0, current!.length - (i + 1)))
             }, time);

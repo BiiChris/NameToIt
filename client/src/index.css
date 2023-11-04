@@ -63,6 +63,7 @@ button {
     padding: 0.3rem 2rem;
     border-radius: 500px;
     margin: 1rem;
+    color: white;
 }
 
 button:nth-child(3) {
